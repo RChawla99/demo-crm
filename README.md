@@ -1,0 +1,1 @@
+Client: Demo Project Built by: Ronnit Chawla ## What this is A CRM system that captures leads, stores contacts, and automates follow-up for small business clients. ## What will be built - Lead capture form - Contact database - Automated email follow-up - Admin dashboard
