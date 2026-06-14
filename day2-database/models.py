@@ -20,3 +20,26 @@ class LeadCreate(SQLModel):
 class LeadUpdate(SQLModel):
     status: Optional[str] = None
     notes: Optional[str] = None
+    # ─── USER MODELS ─────────────────────────────────────────────────
+
+from datetime import datetime
+
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str = Field(unique=True, index=True)
+    business_name: Optional[str] = None
+    hashed_password: str
+    created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
+
+
+class UserCreate(SQLModel):
+    email: str
+    business_name: Optional[str] = None
+    password: str
+
+
+class UserPublic(SQLModel):
+    id: int
+    email: str
+    business_name: Optional[str] = None
+    created_at: datetime
