@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CRM Leads API", lifespan=lifespan)
 
 
-# ─── AUTH ROUTES ─────────────────────────────────────────────────
+# —— AUTH ROUTES ————————————————————————————————————————————
 
 @app.post("/auth/register", response_model=UserPublic)
 def register(user_data: UserCreate, session: Session = Depends(get_session)):
@@ -56,7 +56,7 @@ def login(
     return {"access_token": token, "token_type": "bearer"}
 
 
-# ─── LEAD ROUTES (protected) ─────────────────────────────────────
+# —— LEAD ROUTES (protected) ————————————————————————————————
 
 @app.post("/leads", response_model=Lead)
 def create_lead(
@@ -64,7 +64,10 @@ def create_lead(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    lead = Lead.model_validate(lead_data)
+    lead = Lead(
+        **lead_data.model_dump(),
+        user_id=current_user.id
+    )
     session.add(lead)
     session.commit()
     session.refresh(lead)
@@ -76,7 +79,9 @@ def get_leads(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    leads = session.exec(select(Lead)).all()
+    leads = session.exec(
+        select(Lead).where(Lead.user_id == current_user.id)
+    ).all()
     return leads
 
 
@@ -87,39 +92,3 @@ def get_lead(
     current_user: User = Depends(get_current_user)
 ):
     lead = session.get(Lead, lead_id)
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-    return lead
-
-
-@app.patch("/leads/{lead_id}", response_model=Lead)
-def update_lead(
-    lead_id: int,
-    lead_data: LeadUpdate,
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
-):
-    lead = session.get(Lead, lead_id)
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-    update_data = lead_data.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(lead, key, value)
-    session.add(lead)
-    session.commit()
-    session.refresh(lead)
-    return lead
-
-
-@app.delete("/leads/{lead_id}")
-def delete_lead(
-    lead_id: int,
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
-):
-    lead = session.get(Lead, lead_id)
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-    session.delete(lead)
-    session.commit()
-    return {"message": f"Lead {lead_id} deleted"}
