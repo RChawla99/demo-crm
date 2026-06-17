@@ -1,6 +1,14 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field
 from datetime import datetime
+from enum import Enum
+
+
+class LeadStatus(str, Enum):
+    new = "new"
+    contacted = "contacted"
+    qualified = "qualified"
+    closed = "closed"
 
 
 class Lead(SQLModel, table=True):
@@ -10,8 +18,9 @@ class Lead(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     phone: Optional[str] = None
     source: Optional[str] = None
-    status: str = Field(default="new")
+    status: LeadStatus = Field(default=LeadStatus.new)
     notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class LeadCreate(SQLModel):
@@ -23,13 +32,13 @@ class LeadCreate(SQLModel):
 
 
 class LeadUpdate(SQLModel):
-    status: Optional[str] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    source: Optional[str] = None
+    status: Optional[LeadStatus] = None
     notes: Optional[str] = None
 
-
-# —— USER MODELS ————————————————————————————————————————————
-
-from datetime import datetime
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -41,12 +50,10 @@ class User(SQLModel, table=True):
 
 class UserCreate(SQLModel):
     email: str
-    business_name: Optional[str] = None
     password: str
+    business_name: Optional[str] = None
 
 
 class UserPublic(SQLModel):
     id: int
     email: str
-    business_name: Optional[str] = None
-    created_at: datetime

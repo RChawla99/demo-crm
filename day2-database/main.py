@@ -1,10 +1,10 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Optional
 from contextlib import asynccontextmanager
 
-from models import Lead, LeadCreate, LeadUpdate, User, UserCreate, UserPublic
+from models import Lead, LeadCreate, LeadUpdate, LeadStatus, User, UserCreate, UserPublic
 from database import create_db_and_tables, get_session
 from auth import (
     hash_password,
@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CRM Leads API", lifespan=lifespan)
 
 
-# —— AUTH ROUTES ————————————————————————————————————————————
+# —— AUTH ROUTES ————————————————————————————
 
 @app.post("/auth/register", response_model=UserPublic)
 def register(user_data: UserCreate, session: Session = Depends(get_session)):
@@ -56,7 +56,7 @@ def login(
     return {"access_token": token, "token_type": "bearer"}
 
 
-# —— LEAD ROUTES (protected) ————————————————————————————————
+# —— LEAD ROUTES (protected) ————————————————————————————
 
 @app.post("/leads", response_model=Lead)
 def create_lead(
@@ -74,14 +74,37 @@ def create_lead(
     return lead
 
 
-@app.get("/leads", response_model=List[Lead])
-def get_leads(
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+@app.get("/leads/stats")
+def get_lead_stats(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
 ):
     leads = session.exec(
         select(Lead).where(Lead.user_id == current_user.id)
     ).all()
+
+    stats = {status.value: 0 for status in LeadStatus}
+
+    for lead in leads:
+        stats[lead.status.value] += 1
+
+    stats["total"] = sum(stats.values())
+
+    return stats
+
+
+@app.get("/leads", response_model=List[Lead])
+def get_leads(
+    status: Optional[LeadStatus] = None,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    query = select(Lead).where(Lead.user_id == current_user.id)
+
+    if status:
+        query = query.where(Lead.status == status)
+
+    leads = session.exec(query).all()
     return leads
 
 
@@ -92,3 +115,48 @@ def get_lead(
     current_user: User = Depends(get_current_user)
 ):
     lead = session.get(Lead, lead_id)
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    if lead.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorised")
+    return lead
+
+
+@app.patch("/leads/{lead_id}", response_model=Lead)
+def update_lead(
+    lead_id: int,
+    lead_data: LeadUpdate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    lead = session.get(Lead, lead_id)
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    if lead.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorised")
+
+    update_data = lead_data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(lead, key, value)
+
+    session.add(lead)
+    session.commit()
+    session.refresh(lead)
+    return lead
+
+
+@app.delete("/leads/{lead_id}")
+def delete_lead(
+    lead_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    lead = session.get(Lead, lead_id)
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    if lead.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorised")
+
+    session.delete(lead)
+    session.commit()
+    return {"message": "Lead deleted"}
