@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from typing import List, Optional
+from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
 from models import Lead, LeadCreate, LeadUpdate, LeadStatus, User, UserCreate, UserPublic
@@ -168,3 +169,36 @@ def delete_lead(
     session.delete(lead)
     session.commit()
     return {"message": "Lead deleted"}
+# —— WEBHOOK ROUTES ————————————————————————————
+
+class WebhookLeadData(BaseModel):
+    name: str
+    email: str
+    phone: Optional[str] = None
+    source: Optional[str] = None
+    notes: Optional[str] = None
+    business_email: str
+
+
+@app.post("/webhook/lead")
+def webhook_create_lead(
+    data: WebhookLeadData,
+    session: Session = Depends(get_session)
+):
+    business = get_user_by_email(data.business_email, session)
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    lead = Lead(
+        name=data.name,
+        email=data.email,
+        phone=data.phone,
+        source=data.source,
+        notes=data.notes,
+        user_id=business.id
+    )
+
+    session.add(lead)
+    session.commit()
+    session.refresh(lead)
+    return {"message": "Lead created", "lead_id": lead.id}
