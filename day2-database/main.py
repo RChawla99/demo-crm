@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from models import Lead, LeadCreate, LeadUpdate, LeadStatus, User, UserCreate, UserPublic
 from database import create_db_and_tables, get_session
+from email_service import send_new_lead_notification
 from auth import (
     hash_password,
     verify_password,
@@ -201,4 +202,11 @@ def webhook_create_lead(
     session.add(lead)
     session.commit()
     session.refresh(lead)
+    send_new_lead_notification(
+        business_email=data.business_email,
+        lead_name=data.name,
+        lead_email=data.email or "Not provided",
+        lead_phone=data.phone,
+        lead_company=None,
+    )
     return {"message": "Lead created", "lead_id": lead.id}
