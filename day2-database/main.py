@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 from models import Lead, LeadCreate, LeadUpdate, LeadStatus, User, UserCreate, UserPublic
 from database import create_db_and_tables, get_session
 from email_service import send_new_lead_notification
+from ai_service import score_lead
 from auth import (
     hash_password,
     verify_password,
@@ -202,6 +203,13 @@ def webhook_create_lead(
     session.add(lead)
     session.commit()
     session.refresh(lead)
+    ai_result = score_lead(data.name, data.email, data.phone, data.source, data.notes)
+    if ai_result:
+        lead.ai_score = ai_result["score"]
+        lead.ai_summary = ai_result["summary"]
+        session.add(lead)
+        session.commit()
+        session.refresh(lead)
     send_new_lead_notification(
         business_email=data.business_email,
         lead_name=data.name,

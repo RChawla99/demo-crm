@@ -21,8 +21,9 @@ class Lead(SQLModel, table=True):
     status: LeadStatus = Field(default=LeadStatus.new)
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
-
-
+    ai_score: Optional[int] = None
+    ai_summary: Optional[str] = None
+    
 class LeadCreate(SQLModel):
     name: str
     email: str
