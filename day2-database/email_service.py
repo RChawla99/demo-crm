@@ -46,3 +46,34 @@ def send_new_lead_notification(
     except Exception as e:
         print(f"Failed to send email: {e}")
         return False
+
+def send_lead_confirmation(
+    lead_email: str,
+    lead_name: str,
+    business_name: str = "Our Team",
+):
+    html_body = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2563eb;">Thanks for reaching out, {lead_name}!</h2>
+        <p>We've received your message and a member of {business_name} will be in touch with you within 24 hours.</p>
+
+        <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p>In the meantime, if you have any urgent questions, feel free to reply to this email.</p>
+        </div>
+
+        <p>Talk soon,<br><strong>{business_name}</strong></p>
+    </div>
+    """
+
+    try:
+        response = resend.Emails.send({
+            "from": "CRM Notifications <onboarding@resend.dev>",
+            "to": [lead_email],
+            "subject": f"We received your message!",
+            "html": html_body,
+        })
+        print(f"Lead confirmation sent. ID: {response['id']}")
+        return True
+    except Exception as e:
+        print(f"Failed to send lead confirmation: {e}")
+        return False
