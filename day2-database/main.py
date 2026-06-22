@@ -224,6 +224,7 @@ def webhook_create_lead(
         business_name=data.business_email,
     )
     return {"message": "Lead created", "lead_id": lead.id}
-    @app.get("/dashboard")
+
+@app.get("/dashboard")
 def serve_dashboard():
     return FileResponse("dashboard.html")
