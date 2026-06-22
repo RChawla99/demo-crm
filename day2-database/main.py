@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from typing import List, Optional
@@ -223,3 +224,6 @@ def webhook_create_lead(
         business_name=data.business_email,
     )
     return {"message": "Lead created", "lead_id": lead.id}
+    @app.get("/dashboard")
+def serve_dashboard():
+    return FileResponse("dashboard.html")
