@@ -228,3 +228,7 @@ def webhook_create_lead(
 @app.get("/dashboard")
 def serve_dashboard():
     return FileResponse("dashboard.html")
+
+    @app.get("/pinnacle")
+def serve_pinnacle():
+    return FileResponse("pinnacle-realty.html")
