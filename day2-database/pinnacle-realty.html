@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pinnacle Realty — Find Your Perfect Home</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #f8f6f2;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: #1a1a2e;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      color: #c9a84c;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .logo span { color: #ffffff; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a {
+      color: #ccc;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      padding: 80px 40px;
+      text-align: center;
+      color: white;
+    }
+    .hero-tag {
+      color: #c9a84c;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: normal;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .hero h1 em {
+      color: #c9a84c;
+      font-style: italic;
+    }
+    .hero p {
+      font-family: 'Arial', sans-serif;
+      font-size: 16px;
+      color: #aaa;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* MAIN LAYOUT */
+    .main {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* LEFT SIDE */
+    .left h2 {
+      font-size: 30px;
+      font-weight: normal;
+      margin-bottom: 16px;
+      color: #1a1a2e;
+    }
+    .left p {
+      font-family: 'Arial', sans-serif;
+      font-size: 15px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+    .stat-card {
+      background: white;
+      border: 1px solid #e8e4dc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 28px;
+      color: #c9a84c;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+    }
+    .stat-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+    .testimonial {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 24px;
+      color: white;
+    }
+    .testimonial p {
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .testimonial-author {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: #c9a84c;
+      letter-spacing: 1px;
+    }
+
+    /* RIGHT SIDE — FORM */
+    .form-card {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+      border: 1px solid #e8e4dc;
+    }
+    .form-card h3 {
+      font-size: 22px;
+      font-weight: normal;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+    .form-card .subtitle {
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 28px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      background: #fafafa;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #c9a84c;
+      background: white;
+    }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a2e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .submit-btn:hover { background: #c9a84c; }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* SUCCESS / ERROR */
+    .success-msg {
+      display: none;
+      background: #f0faf0;
+      border: 1px solid #4caf50;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      margin-top: 16px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #2e7d32;
+    }
+    .error-msg {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #f44336;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      margin-top: 16px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #c62828;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #1a1a2e;
+      color: #666;
+      text-align: center;
+      padding: 30px;
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      margin-top: 80px;
+    }
+    footer span { color: #c9a84c; }
+
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; gap: 40px; }
+      .hero h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">PINNACLE <span>REALTY</span></div>
+    <div class="nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Sell</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-tag">Trusted Real Estate Advisors</div>
+    <h1>Find Your <em>Perfect</em> Home<br>in the Right Neighbourhood</h1>
+    <p>Pinnacle Realty connects buyers and sellers with experienced agents who know the market inside and out.</p>
+  </div>
+
+  <div class="main">
+
+    <div class="left">
+      <h2>Let's Start Your Property Journey</h2>
+      <p>Whether you're buying your first home or selling an investment property, our team is ready to guide you every step of the way. Fill out the form and an agent will be in touch within 24 hours.</p>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number">340+</div>
+          <div class="stat-label">Homes Sold</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">12yr</div>
+          <div class="stat-label">In the Market</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">24hr</div>
+          <div class="stat-label">Response Time</div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <p>"Pinnacle Realty made selling our home completely stress-free. We had an offer within the first week and closed above asking price. Couldn't recommend them more."</p>
+        <div class="testimonial-author">— SARAH & JAMES T., SOLD IN OAKVILLE</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="form-card">
+        <h3>Get in Touch</h3>
+        <div class="subtitle">A Pinnacle agent will respond within 24 hours</div>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="name" placeholder="e.g. Sarah Johnson" />
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="e.g. sarah@email.com" />
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="e.g. 647-555-0192" />
+        </div>
+
+        <div class="form-group">
+          <label>I Am Looking To</label>
+          <select id="intent">
+            <option value="">Select one...</option>
+            <option value="Buy a home">Buy a home</option>
+            <option value="Sell my property">Sell my property</option>
+            <option value="Both buy and sell">Both buy and sell</option>
+            <option value="Just exploring">Just exploring</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="message" placeholder="Tell us about your property goals, timeline, budget, or neighbourhood preferences..."></textarea>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+          Request a Consultation
+        </button>
+
+        <div class="success-msg" id="successMsg">
+          ✓ Thank you! Your enquiry has been received. A Pinnacle agent will be in touch within 24 hours.
+        </div>
+        <div class="error-msg" id="errorMsg">
+          Something went wrong. Please try again or call us directly.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2024 <span>Pinnacle Realty</span>. All rights reserved. &nbsp;|&nbsp; hello@pinnaclerealty.com &nbsp;|&nbsp; 647-555-0100
+  </footer>
+
+  <script>
+    async function submitForm() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const intent = document.getElementById('intent').value;
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !phone || !intent) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const payload = {
+        name: name,
+        email: email,
+        phone: phone,
+        message: intent + (message ? ' — ' + message : ''),
+        business_email: 'hello@pinnaclerealty.com'
+      };
+
+      try {
+        const response = await fetch('https://demo-crm-production-6f5b.up.railway.app/webhook/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          document.getElementById('successMsg').style.display = 'block';
+          document.getElementById('errorMsg').style.display = 'none';
+          btn.textContent = 'Enquiry Sent';
+        } else {
+          throw new Error('Server error');
+        }
+      } catch (err) {
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('successMsg').style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Request a Consultation';
+      }
+    }
+  </script>
+
+</body>
+</html>
